@@ -274,3 +274,16 @@ function insertQuickReply(text) {
   input.value = text;
   input.focus();
 }
+
+
+function showNameToast(){
+  const t=document.getElementById('nameToast');
+  t.style.display='flex';
+  setTimeout(()=>t.classList.add('fade-out'),3000); // auto-dismiss
+  setTimeout(()=>{t.style.display='none';t.classList.remove('fade-out')},3500);
+}
+function hideNameToast(){
+  const t=document.getElementById('nameToast');
+  t.classList.add('fade-out');
+  setTimeout(()=>{t.style.display='none';t.classList.remove('fade-out')},350);
+}

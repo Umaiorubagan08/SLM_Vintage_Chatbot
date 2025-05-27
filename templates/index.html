@@ -4,122 +4,219 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vintage Real Estate Chatbot</title>
-    <link rel="stylesheet" href="../static/style.css" />
-    <link
-      rel="icon"
-      href="https://img.icons8.com/color/48/bot.png"
-      type="image/png"
-    />
+
+    <!-- Local CSS & assets -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+
+    <!-- Favicon -->
+    <link rel="icon" href="https://img.icons8.com/color/48/bot.png" type="image/png" />
+
+    <!-- Font Awesome & Google Fonts -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
 
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+      /* ───────── Full-screen video background ───────── */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+      }
+      .video-header { position: fixed; inset: 0; z-index: 0; }
+      .promo-video {
+        width: 100%; height: 100%;
+        object-fit: cover; background:#000; display:block;
+      }
 
+      /* ───────── Floating chat button ───────── */
+      #chat-toggle {
+        position: fixed;
+        bottom: 32px;
+        right: 32px;
+        z-index: 1002;
+
+        width: 72px; height: 72px;
+        border-radius: 50%;
+        background:#000;
+        border:none; padding:0;
+
+        display:flex; align-items:center; justify-content:center;
+        cursor:pointer;
+        transition:transform .2s,box-shadow .2s;
+        box-shadow:0 4px 18px rgba(0,0,0,.25);
+      }
+      #chat-toggle:hover { transform:scale(1.08); box-shadow:0 8px 28px rgba(0,0,0,.35); }
+      #chat-toggle img.chatbot-icon { width:56px; height:56px; pointer-events:none; }
+
+      /* ───────── Pop greeting bubble ───────── */
+      #chat-greeting {
+        position: fixed;
+        bottom: 118px;            /* 32 btn offset + 72 height + 14 gap */
+        right: 32px;
+        max-width: 260px;
+
+        background:#fff; color:#333;
+        padding:10px 14px;
+        border-radius:12px;
+        box-shadow:0 4px 12px rgba(0,0,0,.15);
+        font: 400 14px/1.4 "Poppins", sans-serif;
+
+        opacity:0; transform:translateY(10px);
+        pointer-events:none;
+        transition:opacity .25s, transform .25s;
+      }
+      #chat-greeting::after {               /* little arrow */
+        content:"";
+        position:absolute; bottom:-6px; right:24px;
+        border-width:6px 6px 0 6px;
+        border-style:solid;
+        border-color:#fff transparent transparent transparent;
+      }
+      #chat-greeting.show {
+        opacity:1; transform:translateY(0); pointer-events:auto;
+      }
+
+      /* ───────── Chat popup window ───────── */
+      #chat-popup {
+        position: fixed;
+        bottom: 110px;
+        right: 32px;
+        z-index: 1001;
+
+        width: 380px; max-width: 98vw;
+        height: 600px; max-height:80vh;
+
+        background:transparent;
+        border-radius:18px;
+        box-shadow:0 8px 48px rgba(60,60,90,.26);
+
+        display:none; flex-direction:column; overflow:hidden;
+        animation:popupIn .25s cubic-bezier(.68,-.55,.27,1.55);
+      }
+      @keyframes popupIn {
+        from{opacity:0; transform:translateY(30px) scale(.95);}
+        to{opacity:1; transform:translateY(0) scale(1);}
+      }
+
+      /* ───────── Responsive tweaks ───────── */
+      @media (max-width:700px){
+        #chat-popup{right:2vw; bottom:80px; width:96vw; height:85vh; border-radius:12px;}
+        #chat-toggle{right:4vw; bottom:16px; width:60px; height:60px;}
+        #chat-toggle img.chatbot-icon{width:46px; height:46px;}
+        #chat-greeting{bottom:100px; right:4vw;}
+      }
+      @media (max-width:480px){
+        #chat-popup{bottom:70px; height:82vh;}
+      }
+      @media (max-width:360px){
+        #chat-popup{bottom:60px; height:80vh;}
+      }
+    </style>
   </head>
+
   <body>
-    <main class="app-container">
-      <div class="chat-wrapper">
-        <header>
-          <img
-            src="https://img.icons8.com/color/96/bot.png"
-            alt="Chatbot Logo"
-          />
-          <div class="header-info">
-            <h1>Sudha Real Estate Assistant</h1>
-            <p class="status-indicator">
-              <span class="status-dot"></span> Online
-            </p>
+    <!-- ───────── Video Background ───────── -->
+    <div class="video-header">
+      <video
+        class="promo-video"
+        src="{{ url_for('static', filename='final.mp4') }}"
+        autoplay muted loop playsinline
+      ></video>
+    </div>
+
+    <!-- ───────── Floating Button ───────── -->
+    <button id="chat-toggle">
+      <img
+        src="{{ url_for('static', filename='animated_chatbot.gif') }}"
+        alt="Chatbot"
+        class="chatbot-icon"
+      />
+    </button>
+
+    <!-- ───────── Greeting Bubble ───────── -->
+    <div id="chat-greeting">Hello! I’m Sudha. How can I assist you today?</div>
+
+    <!-- ───────── Popup Chat Window ───────── -->
+    <div id="chat-popup">
+      <main class="app-container">
+        <div class="chat-wrapper">
+          <header>
+            <img src="https://img.icons8.com/color/96/bot.png" alt="Chatbot Logo"/>
+            <div class="header-info">
+              <h1>Sudha Real Estate Assistant</h1>
+              <p class="status-indicator"><span class="status-dot"></span> Online</p>
+            </div>
+          </header>
+
+          <div class="user-init-inputs">
+            <input type="text" id="userId" placeholder="Enter your name..." aria-label="User Identifier"/>
+            <button onclick="initializeChat()" class="btn btn-primary">Start Chat</button>
           </div>
-        </header>
 
-        <div class="user-init-inputs">
-          <input
-            type="text"
-            id="userId"
-            placeholder="Enter your name..."
-            aria-label="User Identifier"
-          />
-          <button onclick="initializeChat()" class="btn btn-primary">
-            Start Chat
-          </button>
-        </div>
+          <div id="chatBox" class="chat-box" role="log" aria-live="polite">
+            <div class="welcome-message">
+              <p>👋 Hello! I’m Sudha. How can I assist you today?</p>
+              <div id="nameToast" class="toast-alert" style="display:none;">
+                <span>Please enter your name first</span>
+                <span class="toast-close" onclick="hideNameToast()">×</span>
+              </div>
+              <div class="chips-container">
+                <span class="chip">Budget &lt;50 L</span>
+                <span class="chip">2 BHK Chennai</span>
+                <span class="chip">Plot in ECR</span>
+              </div>
+            </div>
+          </div>
 
-        <div id="chatBox" class="chat-box" role="log" aria-live="polite">
-          <div class="welcome-message">
-            <p>
-              👋 Hello! I'm Sudha. How can I assist you. Want to enable you with
-              our property in ECR, good technology enabled virtual
-              demonstration?
-            </p>
-            <div class="quick-replies">
-              <button
-                class="quick-reply-btn"
-                onclick="insertQuickReply('Show properties under 50 lakhs')"
-              >
-                Budget <50L
-              </button>
-              <button
-                class="quick-reply-btn"
-                onclick="insertQuickReply('2 BHK flats in Chennai')"
-              >
-                2 BHK Chennai
-              </button>
-              <button
-                class="quick-reply-btn"
-                onclick="insertQuickReply('Plot in ECR')"
-              >
-                Plot in ECR
-              </button>
+          <div class="input-area">
+            <div class="input-wrapper">
+              <input type="text" id="userInput" placeholder="Type your message here..." aria-label="User message input"/>
+              <button class="btn btn-icon" id="voiceInputBtn" aria-label="Voice Input"><i class="fas fa-microphone"></i></button>
+            </div>
+            <div class="action-buttons">
+              <button onclick="sendMessage()" class="btn btn-send" aria-label="Send message"><i class="fas fa-paper-plane"></i><span>Send</span></button>
+              <button onclick="translateLast()" class="btn btn-translate" aria-label="Translate"><i class="fas fa-language"></i><span>Tamil</span></button>
             </div>
           </div>
         </div>
+      </main>
+    </div>
 
-        <div class="input-area">
-          <div class="input-wrapper">
-            <!-- <button class="btn btn-icon" id="attachBtn" aria-label="Attach file">
-            <i class="fas fa-paperclip"></i>
-          </button> -->
-            <input
-              type="text"
-              id="userInput"
-              placeholder="Type your message here..."
-              aria-label="User message input"
-            />
-            <!-- <button class="btn btn-icon" id="emojiBtn" aria-label="Open emoji picker">
-            <i class="far fa-smile"></i>
-          </button> -->
+    <!-- ───────── Scripts ───────── -->
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script>
+      const toggleBtn  = document.getElementById("chat-toggle");
+      const popup      = document.getElementById("chat-popup");
+      const greeting   = document.getElementById("chat-greeting");
 
-            <button
-              class="btn btn-icon"
-              id="voiceInputBtn"
-              aria-label="Voice Input"
-            >
-              <i class="fas fa-microphone"></i>
-            </button>
-          </div>
-          <div class="action-buttons">
-            <button
-              onclick="sendMessage()"
-              class="btn btn-send"
-              aria-label="Send message"
-            >
-              <i class="fas fa-paper-plane"></i>
-              <span>Send</span>
-            </button>
-            <button
-              onclick="translateLast()"
-              class="btn btn-translate"
-              aria-label="Translate last message"
-            >
-              <i class="fas fa-language"></i>
-              <span> Tamil </span>
-            </button>
-          </div>
-        </div>
-      </div>
-    </main>
-    <script src="../static/script.js"></script>
+      /* open/close popup */
+      toggleBtn.onclick = () =>{
+        popup.style.display = popup.style.display === "flex" ? "none" : "flex";
+      };
+
+      /* hide popup when clicking outside */
+      document.addEventListener("click",(e)=>{
+        if(popup.style.display==="flex" && !popup.contains(e.target) && !toggleBtn.contains(e.target)){
+          popup.style.display="none";
+        }
+      });
+
+      /* initial greeting bubble */
+      window.addEventListener("load",()=>{
+        greeting.classList.add("show");            // fade in
+        setTimeout(()=>greeting.classList.remove("show"),5000);  // hide after 5 s
+      });
+
+      /* show bubble on hover */
+      toggleBtn.addEventListener("mouseenter",()=>greeting.classList.add("show"));
+      toggleBtn.addEventListener("mouseleave",()=>greeting.classList.remove("show"));
+    </script>
   </body>
 </html>
