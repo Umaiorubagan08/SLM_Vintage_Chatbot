@@ -1,0 +1,52 @@
+[
+  {
+    "name": "Seymathri",
+    "preferences": {
+      "locations": ["Madhavaram", "Vadaperumbakkam", "Meenjur", "Perungudi", "Thoraipakkam", "ECR", "Koovathur", "Kalpakkam"],
+      "property_type": ["Flat", "Apartment"],
+      "budget": "Up to ₹30L",
+      "purpose": "Investment",
+      "comments": "Looking around North Chennai. Wants clarity on location. Project under construction, interested if within budget."
+    }
+  },
+  {
+    "name": "Dinesh",
+    "preferences": {
+      "locations": ["Koovathur", "Kalpakkam", "Perungudi", "ECR"],
+      "property_type": ["Plot", "Flat"],
+      "budget": "₹30L–₹33L",
+      "purpose": "Own Use",
+      "comments": "Interested but will buy in 6 months to 1 year. Already visited the location. Project is under construction."
+    }
+  },
+  {
+    "name": "Senthil Raja",
+    "preferences": {
+      "locations": ["Athimedu", "Tambaram", "Selaiyur", "Mappedu"],
+      "property_type": "Plot",
+      "budget": "₹30L–₹90L",
+      "purpose": "Residential (Build a House)",
+      "comments": "Not interested in flats or general investments. Wants local land to build a house."
+    }
+  },
+  {
+    "name": "Aravaid",
+    "preferences": {
+      "locations": ["Koovathur", "Kalpakkam", "ECR", "Six-Lane Highway area"],
+      "property_type": ["Plot", "Flat"],
+      "budget": "₹33L for 2400 sq. ft.",
+      "purpose": "Investment",
+      "comments": "Interested in DTCP plots. Emphasized location near highway and stadium. Prefers no middlemen. Likes potential for quick ROI."
+    }
+  },
+  {
+    "name": "Shankar",
+    "preferences": {
+      "locations": ["Koovathur", "Kalpakkam", "ECR"],
+      "property_type": "Plot",
+      "budget": "₹33L–₹35L",
+      "purpose": "Undecided",
+      "comments": "Confused about road connectivity (ECR, NH-51). Wants clarity on access. DTCP plots and long-term potential."
+    }
+  }
+]
