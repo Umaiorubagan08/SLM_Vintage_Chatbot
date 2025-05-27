@@ -4,7 +4,6 @@ let isVoiceEnabled = true;
 let voices = [];
 let tamilVoice = null;
 let englishVoice = null;
-// Female voice preference
 let tamilFemaleVoice = null;
 let englishFemaleVoice = null;
 
@@ -46,7 +45,6 @@ function initSpeechSynthesis() {
   }
 }
 
-// DOMContentLoaded: initialize everything
 document.addEventListener('DOMContentLoaded', () => {
   initSpeechSynthesis();
 
@@ -55,8 +53,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.key === 'Enter') sendMessage();
   });
 
-  // Voice input setup
-  if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+  // Mic button handling for compatibility
+  const voiceBtn = document.getElementById('voiceInputBtn');
+  const isVoiceSupported = 'webkitSpeechRecognition' in window || 'SpeechRecognition' in window;
+
+  if (isVoiceSupported && voiceBtn) {
     recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
     recognition.continuous = false;
     recognition.interimResults = false;
@@ -64,15 +65,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     recognition.onstart = function() {
       recognizing = true;
-      document.getElementById('voiceInputBtn').classList.add('listening');
+      voiceBtn.classList.add('listening');
     };
     recognition.onend = function() {
       recognizing = false;
-      document.getElementById('voiceInputBtn').classList.remove('listening');
+      voiceBtn.classList.remove('listening');
     };
     recognition.onerror = function(e) {
       recognizing = false;
-      document.getElementById('voiceInputBtn').classList.remove('listening');
+      voiceBtn.classList.remove('listening');
       showAlert('🎤 Voice recognition error or permission denied.');
     };
     recognition.onresult = function(event) {
@@ -86,16 +87,22 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     };
 
-    document.getElementById('voiceInputBtn').addEventListener('click', function() {
+    voiceBtn.addEventListener('click', function() {
       if (recognizing) {
         recognition.stop();
       } else {
         recognition.start();
       }
     });
-  } else {
-    document.getElementById('voiceInputBtn').disabled = true;
-    document.getElementById('voiceInputBtn').title = 'Voice recognition not supported in this browser';
+
+    // Optional: Tooltip if browser supports voice
+    voiceBtn.title = 'Start voice input (works best in Chrome/Edge desktop & Android)';
+  } else if (voiceBtn) {
+    // Hide mic button if unsupported (best UX)
+    voiceBtn.style.display = "none";
+    // Or, if you prefer to show a disabled button with a tooltip:
+    // voiceBtn.disabled = true;
+    // voiceBtn.title = 'Voice input is not supported in this browser/device. Try Chrome desktop or Android for voice chat.';
   }
 });
 
@@ -242,17 +249,23 @@ function speak(text, lang = 'en-US') {
   speechSynthesis.speak(msg);
 }
 
-// Show alert
 function showAlert(message) {
+  const chatWrapper = document.querySelector('.chat-wrapper');
+  if (!chatWrapper) return;
+
+  // Remove any existing alert before adding a new one
+  const oldAlert = chatWrapper.querySelector('.alert-message');
+  if (oldAlert) oldAlert.remove();
+
   const alert = document.createElement("div");
   alert.className = "alert-message";
   alert.textContent = message;
-  document.body.appendChild(alert);
+  chatWrapper.appendChild(alert);
 
   setTimeout(() => {
     alert.classList.add("fade-out");
-    setTimeout(() => alert.remove(), 300);
-  }, 3000);
+    setTimeout(() => alert.remove(), 350);
+  }, 2800);
 }
 
 // Quick replies: auto-fill userInput

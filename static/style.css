@@ -99,6 +99,37 @@ body {
   border: 1px solid rgba(0,0,0,0.05);
 }
 
+
+/* Alert Message INSIDE chat-wrapper */
+.alert-message {
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--secondary-color);
+  color: #fff;
+  padding: 13px 38px;
+  border-radius: var(--border-radius-lg);
+  font-weight: 600;
+  z-index: 99;
+  box-shadow: 0 4px 18px 0 rgba(0,0,0,0.10);
+  opacity: 1;
+  font-size: var(--font-size-base);
+  transition: opacity 0.4s, top 0.35s;
+  pointer-events: none;
+  border: 2px solid var(--accent-color);
+  min-width: 220px;
+  max-width: 85%;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.alert-message.fade-out {
+  opacity: 0;
+  top: 0px;
+}
+
+
 /* Header Styles */
 header {
   display: flex;
